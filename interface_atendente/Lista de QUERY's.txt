@@ -1,0 +1,22 @@
+Lista de QUERY's
+
+Criar Tabela --
+
+CREATE TABLE `NOME_DO_BD`.`NOME_DA_TABELA` ( `Pessoa` TEXT NOT NULL , `Horario` DATE NOT NULL ) ENGINE = InnoDB;
+
+Renomear Tabela -- 
+
+RENAME TABLE `NOME_DO_BD`.`NOME_DA_TABELA` TO `NOME_DO_BD`.`FUTURO_NOME_DA_TABELA`;
+
+Inserir Dados Na Tabela -- 
+
+INSERT INTO `NOME_DA_TABELA` (`COLUNA1`, `COLUNA2`) VALUES ('VALOR_COLUNA1', 'VALOR_COLUNA2');
+
+Alterar Dados De Coluna Na Tabela -- 
+
+UPDATE `NOME_DA_TABELA` SET `COLUNA1`=VALOR_COLUNA1,`COLUNA2`=VALOR_COLUNA2
+
+// obs 
+		O tipo TIME deve estar entre aspas simples quando for adicionado na tabela. Não há necessidade de ser especificado os segundos!
+
+

@@ -32,14 +32,14 @@ class gera_query(object):
 
 		return self.query
 
-	def verifica_se_tabela_esta_vazia(self, tabela, coluna_verificacao = "Pessoa")
+	def verifica_se_tabela_esta_vazia(self, tabela, coluna_verificacao = "Pessoa"):
 		self.query =  "SELECT * FROM"
 		self.query += f"`{tabela}` WHERE `{coluna_verificacao}`"
 		self.query += "!= ''"
 
 		return self.query
 
-	def inserir_na_tabela(self, tabela, coluna, dados, string = True):
+	def inserir_na_tabela(self, tabela, dados, string = True):
 		"""
 		string é um booleano, que
 		sendo verdadeiro indica que
@@ -48,9 +48,9 @@ class gera_query(object):
 		sem estar entre aspas
 		"""
 		self.query =  f"INSERT INTO `{tabela}`"
-		self.query += f"`coluna` VALUES"
+		self.query += f" (`Pessoa`, `Horario`) VALUES "
 		if string:
-			self.query += f"'{dados}';"
+			self.query += f"('{dados[0]}', '{dados[1]}')"
 		else:
 			self.query += f"{dados};"
 

@@ -37,6 +37,26 @@ class avelar_model():
 
 		return salas_livres
 
+	def listar_salas_em_uso(self, salas):
+		salas_em_uso = list()
+		for sala in salas:
+			try:
+				sala = str(sala)
+			except:
+				raise
+			query = self.manager.verifica_se_tabela_esta_vazia(sala)
+			resposta = self.final_com_retorno(query)
+			if len(resposta) is not 0:
+				salas_em_uso.append(sala)
+
+		return salas_em_uso
+
+	def listar_velorios(self, sala):
+		query = self.manager.buscar_dados_da_tabela(sala)
+
+		velorio = self.final_com_retorno(query)
+		return velorio[0]
+
 	def renomear_sala(self, sala, novo_nome):
 		query = self.manager.renomear_tabela("salas", sala, novo_nome)
 		self.final_sem_retorno(query)
@@ -45,20 +65,51 @@ class avelar_model():
 		query = self.manager.excluir_tabela(sala)
 		self.final_sem_retorno(query)
 
-	def novo_velorio(self, sala, pessoa, horario):
-		query = self.manager.inserir_na_tabela(tabela = str(sala), dados = [str(pessoa), str(horario)])
+	def novo_velorio(self, velorio):
+		dados = list()
+		sala = velorio[0]
+		del(velorio[0])
+		colunas = self.listar_nome_dos_dados(sala)
+		del(colunas[4])
+		for item in velorio:
+			dados.append(str(item))
 		try:
-			self.final_sem_retorno(query)
+			query = self.manager.inserir_na_tabela(sala, colunas, dados)
 		except:
 			raise
+		else:
+			try:
+				self.final_sem_retorno(query)
+			except:
+				raise
 
-	def editar_nome(self, sala, novo_nome):
-		query = self.manager.alterar_dados_da_tabela(tabela = sala, coluna = "Pessoa", dados = novo_nome)
-		self.final_sem_retorno(query)
+	def editar_velorio(self, velorio):
+		dados = list()
+		sala = velorio[0]
+		del(velorio[0])
+		colunas = self.listar_nome_dos_dados(sala)
+		del(colunas[4])
+		for item in velorio:
+			dados.append(str(item))
 
-	def editar_horario(self, sala, novo_horario):
-		query = self.manager.alterar_dados_da_tabela(tabela = sala, coluna = "Horario", dados = novo_horario)
-		self.final_sem_retorno(query)
+		try:
+			query = self.manager.alterar_dados_da_tabela(sala, colunas, dados)
+		except:
+			raise
+		else:
+			try:
+				self.final_sem_retorno(query)
+			except:
+				raise
+
+	def listar_nome_dos_dados(self, sala):
+		retorno = list()
+		query = self.manager.listar_colunas(sala)
+		dados = self.final_com_retorno(query)
+		for x in range(len(dados)):
+			retorno.append(dados[x][0])
+
+		return retorno
 
 	def final_sem_retorno(self, query):
 		try:
@@ -79,11 +130,11 @@ class avelar_model():
 	def trata_novo_velorio(self, string):
 		"""As informações do Falecido
 		E do Horário do Velório
-		Chegam no formato = 'sala-nome-hora-'
-		e deve ser retornado ['sala', nome', 'hora']
+		Chegam no formato = 'sala-nome-hora_saida-data_sepultamento-cemiterio'
+		e deve ser retornado ['sala', nome', 'hora_saida', 'data_sepultamento', 'cemiterio']
 		"""
 		retorno = string.split("-")
-		del(retorno[3])
+		del(retorno[5])
 		return retorno
 
 """teste = avelar_model()

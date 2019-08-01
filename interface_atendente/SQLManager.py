@@ -39,7 +39,12 @@ class gera_query(object):
 
 		return self.query
 
-	def inserir_na_tabela(self, tabela, dados, string = True):
+	def listar_colunas(self, tabela):
+		self.query = f"DESCRIBE `{tabela}`"
+
+		return self.query
+
+	def inserir_na_tabela(self, tabela, colunas, dados, string = True):
 		"""
 		string é um booleano, que
 		sendo verdadeiro indica que
@@ -48,15 +53,28 @@ class gera_query(object):
 		sem estar entre aspas
 		"""
 		self.query =  f"INSERT INTO `{tabela}`"
-		self.query += f" (`Pessoa`, `Horario`) VALUES "
+		self.query += f" ("
+		cont = 0
+		for coluna in colunas:
+			cont += 1
+			self.query += f"`{coluna}`"
+			if cont < len(colunas):
+				self.query += ", "
+		self.query += ") VALUES ("
 		if string:
-			self.query += f"('{dados[0]}', '{dados[1]}')"
+			cont = 0
+			for dado in dados:
+				cont += 1
+				self.query += f"'{dado}'"
+				if cont < len(dados):
+					self.query += ", "
+			self.query += ")"
 		else:
-			self.query += f"{dados};"
+			pass
 
 		return self.query
 
-	def alterar_dados_da_tabela(self, tabela, coluna, dados, string = True):
+	def alterar_dados_da_tabela(self, tabela, colunas, dados, string = True):
 		"""
 		string é um booleano, que
 		sendo verdadeiro indica que
@@ -66,8 +84,14 @@ class gera_query(object):
 		"""
 		self.query =  f"UPDATE `{tabela}` SET"
 		if string:
-			self.query += f"`{coluna}`= '{dados}';"
-		else:
-			self.query += f"`{coluna}`= {dados};"
+			for x in range(len(colunas)):
+				self.query += f"`{colunas[x]}` = '{dados[x]}'"
+				if x < len(colunas)-1:
+					self.query += ", "
+		self.query += ";"
+		return self.query
+
+	def buscar_dados_da_tabela(self, tabela):
+		self.query = f"SELECT * FROM `{tabela}`"
 
 		return self.query

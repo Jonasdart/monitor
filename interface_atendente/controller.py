@@ -7,6 +7,7 @@ import model
 import view
 from __login__ import login
 from time import sleep
+import os
 
 class control():
     def __init__(self):
@@ -23,6 +24,8 @@ class control():
         else:
             for line in self.cred.readlines():
                 dados_login.append(line.strip())
+            self.cred.close()
+            os.remove(".crd.txt")
             return dados_login
 
     def login(self, cred):
@@ -43,6 +46,7 @@ class control():
         for dado in dados.readlines():
             itens.append(dado.strip())
         dados.close()
+        os.remove("dados.txt")
         return itens
 
     def inicio(self):
@@ -60,7 +64,7 @@ class control():
                 dados = self.buscador_de_dados()
                 self.armador(dados)
         else:
-            self.view.tela_inicial()
+            self.view.tela_inicial(self.banco, self.cursor)
             dados = self.buscador_de_dados()
             self.armador(dados)
 
@@ -69,21 +73,31 @@ class control():
         if tipo is '0':
             velorio = self.model.trata_novo_velorio(dados[1])
             self.novo_velorio(velorio)
-        elif tipo is 1:
-            self.editar_nome(dados)
+        elif tipo is '1':
+            velorio = self.model.trata_novo_velorio(dados[1])
+            self.editar_velorio(velorio)
         elif tipo is 2:
             pass
-    def nova_sala(self):
-        pass
+
     def novo_velorio(self, velorio):
         try:
-            self.model.novo_velorio(velorio[0], velorio[1], velorio[2])
+            self.model.novo_velorio(velorio)
         except:
             self.view.popup_info("Velório Não Foi Salvo!")
-            self.view.tela_novo_velorio(self.model.listar_salas_livres(self.model.listar_salas()))
+            self.inicio()
         else:
             self.view.popup_info("Velório Salvo Com Sucesso!", cor = "green", cor_letra = "black")
-            self.view.tela_inicial(self.banco, self.cursor)
+            self.inicio()
+
+    def editar_velorio(self, velorio):
+        try:
+            self.model.editar_velorio(velorio)
+        except:
+            self.view.popup_info("Dados Não Alterados!")
+            self.inicio()
+        else:
+            self.view.popup_info("Velório Atualizado com Sucesso!", cor = "green", cor_letra = "black")
+            self.inicio()
 
     def editar_sala(self):
         pass

@@ -32,10 +32,13 @@ class gera_query(object):
 
 		return self.query
 
-	def verifica_se_tabela_esta_vazia(self, tabela, coluna_verificacao = "Pessoa"):
+
+	def verifica_se_tabela_esta_vazia(self, tabela, where = False, coluna_verificacao = "Pessoa", valor_where = ""):
 		self.query =  "SELECT * FROM"
-		self.query += f"`{tabela}` WHERE `{coluna_verificacao}`"
-		self.query += "!= ''"
+		self.query += f"`{tabela}` "
+		if where:
+			self.query += f"WHERE `{coluna_verificacao}`"
+			self.query += f"= '{valor_where}'"
 
 		return self.query
 
@@ -43,6 +46,7 @@ class gera_query(object):
 		self.query = f"DESCRIBE `{tabela}`"
 
 		return self.query
+
 
 	def inserir_na_tabela(self, tabela, colunas, dados, string = True):
 		"""
@@ -91,7 +95,24 @@ class gera_query(object):
 		self.query += ";"
 		return self.query
 
-	def buscar_dados_da_tabela(self, tabela):
-		self.query = f"SELECT * FROM `{tabela}`"
+	def buscar_dados_da_tabela(self, tabela, where = False, coluna_verificacao = "", valor_where = ""):
+		self.query = f"SELECT * FROM `{tabela}` "
+		if where:
+			self.query += f"WHERE `{coluna_verificacao}` = '{valor_where}'"
 
 		return self.query
+
+	def excluir_dados_da_tabela(self, tabela, where = False, coluna_verificacao = "", valor_where = ""):
+		self.query = f"DELETE FROM `{tabela}` WHERE "
+		if where:
+			self.query += f"`{coluna_verificacao}` = '{valor_where}'"
+		else:
+			self.query += "0"
+
+		return self.query
+
+
+
+
+
+

@@ -71,13 +71,14 @@ class control():
     def armador(self, dados):
         tipo = dados[0]
         if tipo is '0':
-            velorio = self.model.trata_novo_velorio(dados[1])
+            velorio = self.model.trata_info_velorio(dados[1])
             self.novo_velorio(velorio)
         elif tipo is '1':
-            velorio = self.model.trata_novo_velorio(dados[1])
+            velorio = self.model.trata_info_velorio(dados[1])
             self.editar_velorio(velorio)
-        elif tipo is 2:
-            pass
+        elif tipo is '2':
+            velorio = self.model.trata_info_velorio(dados[1])
+            self.excluir_velorio(velorio[0])
 
     def novo_velorio(self, velorio):
         try:
@@ -98,6 +99,17 @@ class control():
         else:
             self.view.popup_info("Velório Atualizado com Sucesso!", cor = "green", cor_letra = "black")
             self.inicio()
+
+    def excluir_velorio(self, velorio):
+        try:
+            self.model.excluir_velorio(velorio)
+        except:
+            self.view.popup_info("Velório Não Excluído!")
+            self.inicio()
+        else:            
+            self.view.popup_info("Velório Excluído com Sucesso!", cor = "green", cor_letra = "black")
+            self.inicio()
+
 
     def editar_sala(self):
         pass

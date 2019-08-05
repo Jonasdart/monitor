@@ -78,7 +78,7 @@ class gera_query(object):
 
 		return self.query
 
-	def alterar_dados_da_tabela(self, tabela, colunas, dados, string = True):
+	def alterar_dados_da_tabela(self, tabela, colunas, dados, where = False, coluna_verificacao = "", valor_where = "", string = True):
 		"""
 		string é um booleano, que
 		sendo verdadeiro indica que
@@ -92,6 +92,8 @@ class gera_query(object):
 				self.query += f"`{colunas[x]}` = '{dados[x]}'"
 				if x < len(colunas)-1:
 					self.query += ", "
+		if where:
+			self.query += f"WHERE `{coluna_verificacao}` = '{valor_where}'"
 		self.query += ";"
 		return self.query
 

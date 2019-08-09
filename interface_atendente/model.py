@@ -54,17 +54,16 @@ class avelar_model():
 	def listar_salas_livres(self, salas):
 		salas_livres = list()
 		for sala in salas:
-			query = self.manager.verifica_se_tabela_esta_vazia("velorios", where = True, coluna_verificacao = "Sala", valor_where = sala)
+			query = self.manager.verifica_se_tabela_esta_vazia("velorios", where = True, coluna_verificacao = "num_sala", valor_where = sala)
 			resposta = self.final_com_retorno(query)
 			if len(resposta) is 0:
 				salas_livres.append(sala)
-
 		return salas_livres
 
 	def listar_salas_em_uso(self, salas):
 		salas_em_uso = list()
 		for sala in salas:
-			query = self.manager.verifica_se_tabela_esta_vazia("velorios", where = True, coluna_verificacao = "Sala", valor_where = sala)
+			query = self.manager.verifica_se_tabela_esta_vazia("velorios", where = True, coluna_verificacao = "num_sala", valor_where = sala)
 			resposta = self.final_com_retorno(query)
 			if len(resposta) is not 0:
 				salas_em_uso.append(sala)
@@ -91,26 +90,26 @@ class avelar_model():
 			except:
 				raise
 
-	def listar_velorios(self, sala):
-		query = self.manager.buscar_dados_da_tabela("velorios", where = True, coluna_verificacao = "Sala", valor_where = sala)
-
-		velorio = self.final_com_retorno(query)
-
-		return velorio
-
-	def buscar_informacoes_velorio(self, velorio):
-		query = self.manager.buscar_dados_da_tabela("velorios", where = True, coluna_verificacao = "Velorio", valor_where = velorio)
-		velorio = self.final_com_retorno(query)
-
-		return velorio
-
 	def editar_velorio(self, velorio):
-		dados = list()
+		id_velorio = velorio[0]
+		del(velorio[0])
 		colunas = self.listar_nome_dos_dados("velorios")
-		del(colunas[1])
-		del(colunas[5])
+		del(colunas[0])
+		del(colunas[2])
+		del(colunas[6])
 		try:
-			query = self.manager.alterar_dados_da_tabela("velorios", colunas, velorio, where = True, coluna_verificacao = "Velorio", valor_where = velorio[0])
+			query = self.manager.alterar_dados_da_tabela("velorios", colunas, velorio, where = True, coluna_verificacao = "id", valor_where = id_velorio)
+		except:
+			raise
+		else:
+			try:
+				self.final_sem_retorno(query)
+			except:
+				raise
+
+	def concluir_velorio(self, velorio):
+		try:
+			query = self.manager.alterar_dados_da_tabela("velorios", ["Status"], ["1"], where = True, coluna_verificacao = "id", valor_where = velorio[0])
 		except:
 			raise
 		else:
@@ -120,13 +119,42 @@ class avelar_model():
 				raise
 
 	def excluir_velorio(self, velorio):
-		query = self.manager.excluir_dados_da_tabela("velorios", where = True, coluna_verificacao = "Velorio", valor_where = velorio[0])
+		query = self.manager.excluir_dados_da_tabela("velorios", where = True, coluna_verificacao = "id", valor_where = velorio[0])
 
 		try:
 			self.final_sem_retorno(query)
 		except:
 			raise
 
+	def listar_velorios(self, sala):
+		query = self.manager.buscar_dados_da_tabela("velorios", where = True, coluna_verificacao = "num_sala", valor_where = sala)
+
+		velorio = self.final_com_retorno(query)
+
+		return velorio
+
+	def listar_velorios_nao_concluidos(self, sala):
+		query = self.manager.buscar_dados_da_tabela("velorios", where = True, coluna_verificacao = ["num_sala", "Status"], valor_where = [sala, "0"])
+
+		velorio = self.final_com_retorno(query)
+
+		return velorio
+
+	def buscar_informacoes_velorio(self, velorio):
+		query = self.manager.buscar_dados_da_tabela("velorios", where = True, coluna_verificacao = "id", valor_where = velorio)
+		velorio = self.final_com_retorno(query)
+
+		return velorio
+
+	def conta_velorio_por_sala(self, salas):
+		retorno = list()
+		for sala in salas:
+			cont = 0
+			query = self.manager.buscar_dados_da_tabela("velorios", where = True, coluna_verificacao = "num_sala", valor_where = sala)
+			resposta = self.final_com_retorno(query)
+			cont += len(resposta)
+			retorno.append(f"{cont} velorios")
+		return retorno
 
 	def listar_nome_dos_dados(self, sala):
 		retorno = list()
@@ -136,22 +164,6 @@ class avelar_model():
 			retorno.append(dados[x][0])
 
 		return retorno
-
-	def final_sem_retorno(self, query):
-		try:
-			self.cursor.execute(query)
-		except:
-			raise #Exception("Não Foi Possível Salvar Dados no Banco de Dados!")
-		else:
-			self.banco.commit()
-
-	def final_com_retorno(self, query):
-		try:
-			self.cursor.execute(query)
-		except:
-			raise #Exception("Não Foi Possível Usar Dados do Banco de Dados!")
-		else:
-			return self.cursor.fetchall()
 
 	def trata_para_subir_ao_banco(self, string):
 		"""As informações do Falecido
@@ -167,5 +179,18 @@ class avelar_model():
 		del(retorno[cont])
 		return retorno
 
-"""teste = avelar_model()
-teste.trata_novo_velorio("adfasfasfas-13:50-")"""
+	def final_sem_retorno(self, query):
+		try:
+			self.cursor.execute(query)
+		except:
+			raise
+		else:
+			self.banco.commit()
+
+	def final_com_retorno(self, query):
+		try:
+			self.cursor.execute(query)
+		except:
+			raise 
+		else:
+			return self.cursor.fetchall()

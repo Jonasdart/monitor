@@ -31,10 +31,18 @@ class control():
                 dados = self.buscador_de_dados()
                 self.armador(dados)
         else:
-            self.view.tela_inicial(self.banco, self.cursor)
-            dados = self.buscador_de_dados()
-            self.armador(dados)
+            self.view.tela_inicial(banco = self.banco, cursor = self.cursor)
+            try:
+                dados = self.buscador_de_dados()
+            except:
+                pass
+            try:
+                self.armador(dados)
+            except:
+                self.shutdown()
 
+    def shutdown(self):
+        exit()
 
     def armador(self, dados):
         tipo = dados[0]
@@ -56,6 +64,9 @@ class control():
         elif tipo is '5':
             sala = self.model.trata_para_subir_ao_banco(dados[1])
             self.excluir_sala(sala)
+        elif tipo is '6':
+            velorio = self.model.trata_para_subir_ao_banco(dados[1])
+            self.concluir_velorio(velorio)
 
     def login(self, cred):
         try:
@@ -83,13 +94,16 @@ class control():
             return dados_login
 
     def buscador_de_dados(self):
-        dados = open("dados.txt", 'r')
-        itens = list()
-        for dado in dados.readlines():
-            itens.append(dado.strip())
-        dados.close()
-        os.remove("dados.txt")
-        return itens
+        try:
+            dados = open("dados.txt", 'r')
+            itens = list()
+            for dado in dados.readlines():
+                itens.append(dado.strip())
+            dados.close()
+            os.remove("dados.txt")
+            return itens
+        except:
+            self.shutdown()
 
     def novo_velorio(self, velorio):
         try:
@@ -109,6 +123,16 @@ class control():
             self.inicio()
         else:
             self.view.popup_info("Velório Atualizado com Sucesso!", cor = "green", cor_letra = "black")
+            self.inicio()
+
+    def concluir_velorio(self, velorio):
+        try:
+            self.model.concluir_velorio(velorio)
+        except:
+            self.view.popup_info("Velório Não Pôde Ser Concluído")
+            self.inicio()
+        else:
+            self.view.popup_info("Velório Concluído com Sucesso!", cor = "green", cor_letra = "black")
             self.inicio()
 
     def excluir_velorio(self, velorio):
@@ -166,4 +190,5 @@ if __name__ == "__main__":
 3 - Nova sala
 4 - Editar Sala
 5 - Excluir Sala
+6 - Concluir Velorio
 """

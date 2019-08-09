@@ -86,10 +86,10 @@ class gera_query(object):
 		caso contrario o dado pode ser inserido 
 		sem estar entre aspas
 		"""
-		self.query =  f"UPDATE `{tabela}` SET"
+		self.query =  f"UPDATE `{tabela}` SET "
 		if string:
 			for x in range(len(colunas)):
-				self.query += f"`{colunas[x]}` = '{dados[x]}'"
+				self.query += f"`{colunas[x]}` = '{dados[x]}' "
 				if x < len(colunas)-1:
 					self.query += ", "
 		if where:
@@ -100,7 +100,17 @@ class gera_query(object):
 	def buscar_dados_da_tabela(self, tabela, where = False, coluna_verificacao = "", valor_where = ""):
 		self.query = f"SELECT * FROM `{tabela}` "
 		if where:
-			self.query += f"WHERE `{coluna_verificacao}` = '{valor_where}'"
+			try:
+				coluna_verificacao.append("")
+			except:
+				self.query += f"WHERE `{coluna_verificacao}` = '{valor_where}'"
+			else:
+				del(coluna_verificacao[len(coluna_verificacao)-1])
+				self.query += "WHERE "
+				for x in range(len(coluna_verificacao)):
+					self.query += f"`{coluna_verificacao[x]}` = '{valor_where[x]}'"
+					if x < len(coluna_verificacao) - 1:
+						self.query += " AND "
 
 		return self.query
 

@@ -13,10 +13,17 @@ class avelar_model():
 		self.cursor = cursor
 		self.banco = banco
 
-	def nova_sala(self, sala):
+	def nova_sala(self, nome_sala):
 		colunas = self.listar_nome_dos_dados("salas")
-		del(colunas[0])
-		query = self.manager.inserir_na_tabela("salas", colunas, sala)
+		query = self.manager.buscar_dados_da_tabela("salas")
+		salas = self.final_com_retorno(query)
+		self.num = len(salas)
+		for x in range(len(salas)):
+			if x is not salas[x][0]:
+				self.num = x
+				break
+		nova_sala = [self.num, nome_sala[0]]
+		query = self.manager.inserir_na_tabela("salas", colunas, nova_sala)
 
 		try:
 			self.final_sem_retorno(query)

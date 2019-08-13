@@ -38,13 +38,15 @@ class avelar_view():
             valor += 200
 
     def credencia(self, verifica = False):
+        local_bd = open("bd.txt", "r")
+        local_bd = local_bd.readline()
         if not verifica:
             self.menu_login()
         else:
             self.cred = open(".crd.txt", 'w')
             usuario = self.caixa_pega_usuario.get()
             senha = self.caixa_pega_senha.get()
-            self.cred.write("localhost\n")
+            self.cred.write(f"{local_bd}\n")
             self.cred.write(f"{usuario}\n")
             self.cred.write(f"{senha}\n")
             self.cred.write("avelar\n")
@@ -658,13 +660,18 @@ class avelar_view():
         pop_up.mainloop()
         
 
-    def popup_info(self, texto = "Horário Inválido", cor = "red", cor_letra = "white"):
-        self.limpa_view()
+    def popup_info(self, texto = "Horário Inválido", cor = "red", cor_letra = "white", limpa = True):
+        if limpa:
+            self.limpa_view()
 
         pop_up = Tk()
         pop_up.title(f"{texto}")
         texto_msg_erro = Label(pop_up,text= texto, bd = "10", relief = "flat", foreground = cor_letra, bg = cor)
-        botao_ok = Button(pop_up, text = "OK", command = lambda: self.limpa_view(popup = pop_up))
+        botao_ok = Button(pop_up, text = "OK")
+        if limpa:
+            botao_ok["command"] = lambda: self.limpa_view(popup = pop_up)
+        else:
+            botao_ok["command"] = lambda: pop_up.destroy()
         texto_msg_erro.pack()
         botao_ok.pack()
             
@@ -743,28 +750,28 @@ class avelar_view():
                 int(tmp_horario[0])
                 int(tmp_horario[1])
             except:
-                self.popup_info()
+                self.popup_info(limpa = False)
             else:
-                if int(tmp_horario[0]) < 23 and int(tmp_horario[1]) < 59:
+                if int(tmp_horario[0]) <= 23 and int(tmp_horario[1]) <= 59:
                     if len(dados[indice[1]]) is 5 and ":" in dados[indice[1]]:
                         tmp_horario = dados[indice[1]].split(":")
                         try:
                             int(tmp_horario[0])
                             int(tmp_horario[1])
                         except:
-                            self.popup_info()
+                            self.popup_info(limpa = False)
                         else:
-                            if int(tmp_horario[0]) < 23 and int(tmp_horario[1]) < 59:
-                                self.limpa_view()
+                            if int(tmp_horario[0]) <= 23 and int(tmp_horario[1]) <= 59:
+                                self.limpa_view(popup = pop_up)
                                 self.lancador_de_dados(tipo, dados, pop_up = pop_up)
                             else:
-                                self.popup_info()
+                                self.popup_info(limpa = False)
                     else:
-                        self.popup_info()
+                        self.popup_info(limpa = False)
                 else:
-                    self.popup_info()
+                    self.popup_info(limpa = False)
         else:
-            self.popup_info()
+            self.popup_info(limpa = False)
 
 
     def lancador_de_dados(self, tipo, itens, pop_up = None):

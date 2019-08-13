@@ -86,7 +86,7 @@ class avelar_model():
 	def novo_velorio(self, velorio):
 		colunas = self.listar_nome_dos_dados("velorios")
 		del(colunas[0])
-		del(colunas[5])
+		del(colunas[7])
 		try:
 			query = self.manager.inserir_na_tabela("velorios", colunas, velorio)
 		except:

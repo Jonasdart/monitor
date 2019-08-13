@@ -105,6 +105,40 @@ class control():
         except:
             self.shutdown()
 
+    def nova_sala(self, sala):
+        try:
+            self.model.nova_sala(sala)
+        except:
+            self.view.popup_info("Sala Não Foi Criada!")
+            self.inicio()
+        else:
+            self.view.popup_info(f"'{sala}' criada com Sucesso!", cor = "green", cor_letra = "black")
+            self.inicio()
+
+
+    def editar_sala(self, sala):
+        id_sala = sala[0]
+        novo_nome = sala[1]
+        try:
+            self.model.editar_sala(id_sala, novo_nome)
+        except:
+            self.view.popup_info("Sala Não Foi Editada!")
+            self.inicio()
+        else:
+            self.view.popup_info(f"A sala '{sala[0]}' agora se chama {sala[1]}", cor = "green", cor_letra = "black")
+            self.inicio()
+
+    def excluir_sala(self, sala):
+        id_sala = sala[0]
+        try:
+            self.model.excluir_sala(id_sala)
+        except:
+            self.view.popup_info("Sala Não Foi Excluída!")
+            self.inicio()
+        else:
+            self.view.popup_info(f"A sala '{sala[0]} - {sala[1]}' \nFoi Excluída Com Sucesso!", cor = "green", cor_letra = "black")
+            self.inicio()
+
     def novo_velorio(self, velorio):
         try:
             self.model.novo_velorio(velorio)
@@ -145,39 +179,6 @@ class control():
             self.view.popup_info("Velório Excluído com Sucesso!", cor = "green", cor_letra = "black")
             self.inicio()
 
-    def nova_sala(self, sala):
-        try:
-            self.model.nova_sala(sala)
-        except:
-            self.view.popup_info("Sala Não Foi Criada!")
-            self.inicio()
-        else:
-            self.view.popup_info(f"'{sala}' criada com Sucesso!", cor = "green", cor_letra = "black")
-            self.inicio()
-
-
-    def editar_sala(self, sala):
-        id_sala = sala[0]
-        novo_nome = sala[1]
-        try:
-            self.model.editar_sala(id_sala, novo_nome)
-        except:
-            self.view.popup_info("Sala Não Foi Editada!")
-            self.inicio()
-        else:
-            self.view.popup_info(f"A sala '{sala[0]}' agora se chama {sala[1]}", cor = "green", cor_letra = "black")
-            self.inicio()
-
-    def excluir_sala(self, sala):
-        id_sala = sala[0]
-        try:
-            self.model.excluir_sala(id_sala)
-        except:
-            self.view.popup_info("Sala Não Foi Excluída!")
-            self.inicio()
-        else:
-            self.view.popup_info(f"A sala '{sala[0]} - {sala[1]}' \nFoi Excluída Com Sucesso!", cor = "green", cor_letra = "black")
-            self.inicio()
 
 if __name__ == "__main__":
     start = control()
